@@ -1,107 +1,67 @@
-## Strictly for educational purposes. This was part of a school project.
+# Modular C2 Framework & Post-Exploitation Agent
 
-## Doel
-De opdracht voor deze laatste weken was om de Trojan af te werken, te testen in een veilige en gecontroleerde omgeving.
+## Operational Security & Ethics Notice
+This framework was developed exclusively for research, defensive engineering, and educational purposes within an isolated lab environment. All testing and validation were executed against authorized, self-hosted infrastructure to analyze command-and-control (C2) transport mechanics and endpoint artifact generation.
 
----
-
-## Bevindingen
-
-### Configuratie
-Het configuratiebestand (`config.json`) is modulair opgezet en maakt het mogelijk om modules dynamisch te activeren of configureren zonder wijzigingen aan de kerncode. Belangrijkste parameters:
-- **Poll Interval**: Modules worden iedere 60 seconden uitgevoerd.
-- **Modules**:
-  - **Portscanner**: Scant IP's en poorten.
-  - **System Enumeration**: Verzamelt systeeminformatie.
-  - **Backdoor**: Reverse shell-functionaliteit.
-
-### Code
-#### Core (`main.py`)
-- **Functionaliteit**: 
-  - Dynamisch laden van modules.
-  - Opslaan van resultaten.
-  - Bevat integratie met een private GitHub-repository voor configuratiebeheer.
-
-#### Modules
-
-1. **Backdoor**
-   - **Reverse Shell**: Verbindt naar een opgegeven IP-adres en poort.
-   - **Functie**: Ontvangt en verwerkt commando's van de aanvallende machine.
-
-2. **Portscanner**
-   - **Scan Port**: Controleert of een specifieke poort op een doel-IP open of gesloten is.
-   - **Scan Target**: Scant specifieke poorten of een reeks poorten op een opgegeven IP-adres.
-   - **Scan Common Ports**: Controleert veelgebruikte poorten zoals `80`, `443`, en `22` op een doelwit.
-   - **Discover IPs**: Zoekt actieve apparaten binnen een specifiek subnet.
-   - **Detect OS**: Identificeert het besturingssysteem van een doel-IP via TTL-waarden.
-   - **Get IP Details**: Haalt hostnaam en DNS-gegevens op voor een specifiek IP.
-   - **Functie**: Gebruik van threading voor snelheid en efficiëntie bij het scannen van netwerken.
-
-3. **System Enumeration**
-   - **Get Active Connections**: Lijst alle actieve netwerkverbindingen.
-   - **Get System Info**: Verzamelt details over het besturingssysteem en hardware.
-   - **List Running Processes**: Geeft een overzicht van actieve processen.
-   - **Get Network Config**: Haalt netwerkinstellingen op, zoals IP, subnet, en gateway.
-   - **Get WiFi Networks**: Lijst beschikbare wifi-netwerken.
-   - **Get MAC Address**: Geeft het MAC-adres van het systeem weer.
-   - **Get Disk Usage**: Toont schijfgebruik per partitie.
-   - **List Files**: Lijst bestanden in een opgegeven directory.
-   - **Get Current User**: Geeft de naam van de ingelogde gebruiker.
-   - **List Users**: Lijst alle gebruikers op het systeem.
-   - **Get OS Version**: Toont de versie van het besturingssysteem.
-   - **Get Public IP**: Haalt het publieke IP-adres van het systeem op.
-   - **Get Hostname**: Geeft de hostnaam van het systeem weer.
-   - **Functie**: Zorgt voor uitgebreide systeeminformatie en netwerkanalyse.
-
-### Testen
-De modules zijn getest in een virtuele omgeving. Resultaten:
-- **Backdoor**: Verbindingsopbouw en commandoverwerking functioneren naar behoren.
-- **Portscanner**: Snelheid en accuraatheid van poortscans zijn goed.
-- **System Enumeration**: Systeeminformatie en netwerkgegevens worden correct weergegeven.
-
-### **Ethische overwegingen**
-De functionaliteit van deze Trojan kan in verkeerde handen veel schade aanrichten. Tijdens de ontwikkeling heb ik geprobeerd ethisch te blijven door:
-- De code alleen te gebruiken in een virtuele testomgeving.
----
-
-## Reflectie
-
-### **Wat werkt goed?**
-- **Modulaire aanpak**: De structuur met dynamisch geladen modules bleek zeer effectief. Hierdoor konden functies eenvoudig worden toegevoegd of aangepast zonder wijzigingen aan de kerncode.
-- **Threading in de Portscanner**: Het gebruik van threading zorgde voor aanzienlijk snellere poortscans. Dit bleek vooral nuttig bij grotere netwerken met veel poorten.
-- **Integratie met GitHub**: Het automatisch ophalen van modules en uploaden van resultaten werkte vlekkeloos en vereenvoudigde het beheer.
-
-### **Uitdagingen tijdens de ontwikkeling**
-- **Synchronisatieproblemen**: Het gebruik van threading bracht aanvankelijk enkele racecondities en synchronisatieproblemen met zich mee. Door een globale lock en een betere thread-afhandeling toe te voegen, werden deze opgelost.
-- **Testomgeving opzetten**: Het testen in een gecontroleerde en veilige omgeving was tijdrovend, maar essentieel om risico's te minimaliseren.
-
-### **Wat ik heb geleerd**
-- **Modulestructuur**: Het ontwerpen van een flexibele en uitbreidbare modulearchitectuur was een waardevolle oefening. Dit soort structuren is toepasbaar op veel andere projecten.
-- **Threading en efficiëntie**: Het optimaliseren van prestaties via multithreading gaf inzicht in hoe concurrerende processen efficiënt kunnen worden afgehandeld.
-- **GitHub-integratie**: Het dynamisch ophalen van modules en uploaden van resultaten gaf me inzicht in hoe versiebeheer en automatisering hand in hand kunnen gaan.
+## Project Overview
+This project features a modular post-exploitation agent written in Python that leverages a dynamic runtime architecture. The framework is designed to decouple the core execution engine from individual functional tasks, allowing components to be loaded, updated, or toggled via centralized configurations without altering the primary codebase.
 
 ---
 
+## Technical Architecture
 
+### Core Engine (`main.py`)
+* **Dynamic Module Loading:** Implements runtime importing of functional modules based on orchestration rules.
+* **Asynchronous Execution:** Handles scheduling, module polling loops, and state persistence.
+* **C2 Transport Layer:** Integrates natively with the GitHub API, utilizing a secure private repository as an out-of-band communication channel for receiving configurations and exfiltrating telemetry data.
 
-## Eindproducten
+### Configuration Specification (`config.json`)
+The infrastructure configuration dictates agent behavior dynamically through the following parameters:
+* `poll_interval`: Controls the operational beaconing frequency (default: 60 seconds).
+* `modules`: Dictates which tactical modules are actively compiled and executed at runtime.
 
-### **Code**
-- Een volledig werkende Trojan met:
-  - Configuratiebestand (`config.json`) dat modules en instellingen dynamisch beheert.
-  - Drie aangepaste modules:
-    1. **Backdoor**: Reverse shell-functionaliteit.
-    2. **Portscanner**: Analyseert netwerken en scant poorten.
-    3. **System Enumeration**: Verzamelt uitgebreide systeeminformatie.
+---
 
-### **GitHub-repository**
-- **Structuur**:
-  - **Modules**: Dynamisch geladen functies.
-  - **Data**: Resultaten worden automatisch opgeslagen en geüpload naar de repository.
-  - **Configuratie**: Configuratiebestand om instellingen en modules aan te passen.
-- **Beveiliging**: De repository is privé gehouden om ongeautoriseerde toegang te voorkomen.
+## Subsystem Capabilities
 
-### **Demo**
-Een korte video toont de werking van de Trojan.  
-URL: [https://youtu.be/RH3AChMOpz4](https://youtu.be/RH3AChMOpz4)
+### 1. Network Enumeration & Intelligence (Portscanner)
+Engineered around Python's `threading` primitives to ensure high-throughput network analysis while minimizing race conditions.
+* **Target Scanning:** Scans arbitrary IP address ranges or user-defined port lists.
+* **Service Mapping:** Targeted validation of common service ports (`22`, `80`, `443`).
+* **Subnet Discovery:** Discovers active hosts within a specified network block.
+* **Passive OS Fingerprinting:** Infers remote operating system types using ICMP Time-to-Live (TTL) boundary analysis.
+* **DNS Resolution:** Performs reverse lookups to extract hostnames and domain details.
 
+### 2. Endpoint Reconnaissance (System Enumeration)
+Provides deep inspection of host state and active configuration boundaries.
+* **Process Auditing:** Enumerates all active execution processes running on the host.
+* **Network State:** Maps current network configurations (IP, gateway, subnet mask) and live socket connections.
+* **Identity Management:** Identifies the current execution context and lists local system users.
+* **Hardware & Storage:** Extracts physical volume partitioning, disk utilization metrics, and system hardware specifications.
+* **Wireless Reconnaissance:** Lists available local IEEE 802.11 wireless networks.
+
+### 3. Remote Access (Backdoor)
+* **Reverse Shell Transport:** Establishes TCP socket connections back to a designated listening listener.
+* **Command Interactivity:** Receives, parses, and executes arbitrary shell instructions from the management infrastructure, returning raw stdout/stderr output.
+
+---
+
+## Lab Validation & Engineering Reflections
+
+### Performance Verification
+Testing was conducted within an isolated virtual infrastructure to monitor execution stability and artifact footprint:
+* **Transport Reliability:** The GitHub API beaconing loop functioned with zero dropped telemetry sets.
+* **Concurrency Optimization:** Early development revealed minor synchronization anomalies and race conditions during high-volume port scanning. These were mitigated by implementing global thread locks (`Threading.Lock`) and optimizing socket timeout handling.
+
+### Key Takeaways
+* **Extensible Software Design:** Developing a plug-and-play module loader provided deep insight into robust architectural patterns applicable to scalable enterprise software.
+* **Multithreaded Performance:** Handling concurrent socket connections highlighted the critical need for deterministic resource management and thread synchronization in systems-level tools.
+
+---
+
+## Deliverables & Artifacts
+
+* **Source Code Architecture:** Complete core engine (`main.py`), modular configuration mapping (`config.json`), and the tactical module suite.
+* **Version Control Management:** Maintained within a restricted GitHub repository structure to isolate testing telemetry and code assets.
+* **Operational Video Demonstration:** A comprehensive execution walkthrough showing the C2 infrastructure interacting with the deployment agent.
+  * **Link:** [https://youtu.be/RH3AChMOpz4](https://youtu.be/RH3AChMOpz4)

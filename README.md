@@ -1,5 +1,3 @@
-# Afwerken, testen en eindreflectie
-
 ## Strictly for educational purposes. This was part of a school project.
 
 ## Doel
@@ -64,7 +62,6 @@ De modules zijn getest in een virtuele omgeving. Resultaten:
 ### **Ethische overwegingen**
 De functionaliteit van deze Trojan kan in verkeerde handen veel schade aanrichten. Tijdens de ontwikkeling heb ik geprobeerd ethisch te blijven door:
 - De code alleen te gebruiken in een virtuele testomgeving.
-- De repo op private te houden.
 ---
 
 ## Reflectie
